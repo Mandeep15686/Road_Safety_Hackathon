@@ -15,7 +15,8 @@ class _State extends State<OnboardingScreen> {
   Future<void> _requestPermissions() async {
     setState(() => _loading = true);
     await [Permission.location, Permission.microphone,
-           Permission.locationAlways, Permission.activityRecognition]
+           Permission.locationAlways, Permission.activityRecognition,
+           Permission.phone]
         .request();
     if (mounted) context.go('/health');
   }
@@ -52,6 +53,7 @@ class _State extends State<OnboardingScreen> {
             ('Location', 'For emergency GPS coordinates', Icons.location_on_rounded),
             ('Microphone', 'For crash audio detection', Icons.mic_rounded),
             ('Motion', 'For accelerometer-based detection', Icons.sensors_rounded),
+            ('Phone', 'For direct emergency calling', Icons.phone_android_rounded),
           ].indexed.map((item) {
             final i = item.$1;
             final e = item.$2;

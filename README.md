@@ -106,6 +106,3 @@ flutter test
 *   **Offline First**: Designed for rural highways where 4G/5G is unreliable.
 
 ---
-
-## 📜 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

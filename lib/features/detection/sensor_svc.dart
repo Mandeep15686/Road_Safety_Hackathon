@@ -10,6 +10,7 @@ class SensorService {
   double _prevAccel = 0, _gyroMag = 0, _speed = 0, _audio = 0, _lat = 0, _lng = 0;
   double _lastJerk = 0;
   StreamSubscription? _accelSub, _gyroSub, _gpsSub, _noiseSub;
+  Timer? _refreshTimer;
   final _noiseMeter = NoiseMeter();
 
   void start() {
@@ -50,7 +51,7 @@ class SensorService {
     }
 
     // Fallback timer to ensure UI updates even if sensors are quiet
-    Timer.periodic(const Duration(milliseconds: 200), (_) => _emit());
+    _refreshTimer = Timer.periodic(const Duration(milliseconds: 200), (_) => _emit());
   }
 
   void _emit() {
@@ -70,6 +71,7 @@ class SensorService {
   Stream<SensorVector> get stream => _controller.stream;
 
   void dispose() {
+    _refreshTimer?.cancel();
     _accelSub?.cancel();
     _gyroSub?.cancel();
     _gpsSub?.cancel();

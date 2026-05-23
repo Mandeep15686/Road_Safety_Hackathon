@@ -21,3 +21,6 @@ android/.kotlin/errors/
 # Hive databases
 *.hive
 *.lock
+
+# ML folder
+ml/
