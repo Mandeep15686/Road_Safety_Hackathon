@@ -1,0 +1,23 @@
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+*.g.dart
+# Uncomment to keep generated adapters:
+!lib/features/health/health_model.g.dart
+
+android/local.properties
+android/key.properties
+android/upload-keystore.jks
+ios/Flutter/flutter_export_environment.sh
+
+# Kotlin/Android error logs
+android/.kotlin/errors/
+*.log
+
+# Hive databases
+*.hive
+*.lock
