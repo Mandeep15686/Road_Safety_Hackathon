@@ -46,6 +46,11 @@ dependencies:
   flutter_phone_direct_caller: ^2.2.1
   shared_preferences: ^2.5.5
 
+  # ── NEW: Location-based nearby services ──────────────
+  http: ^1.2.0                  # OSM Overpass API HTTP calls
+  flutter_map: ^6.1.0           # Interactive map (OpenStreetMap tiles)
+  latlong2: ^0.9.0              # LatLng type required by flutter_map
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

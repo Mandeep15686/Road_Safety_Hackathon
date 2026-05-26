@@ -15,6 +15,7 @@ class _SplashState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _anim;
   late Animation<double> _fade;
+  String _status = 'Initializing...';
 
   @override
   void initState() {
@@ -27,26 +28,53 @@ class _SplashState extends ConsumerState<SplashScreen>
 
   Future<void> _boot() async {
     try {
-      debugPrint('Splash: Loading TFLite...');
-      // Load TFLite with a timeout to prevent hanging
+      // 1. Hive Initialization
+      setState(() => _status = 'Loading database...');
+      await Hive.initFlutter();
+      
+      // Register adapters (only if not already registered)
+      _registerIfAbsent(0, () => Hive.registerAdapter(HealthProfileAdapter()));
+      _registerIfAbsent(1, () => Hive.registerAdapter(DetectionLogAdapter()));
+      _registerIfAbsent(2, () => Hive.registerAdapter(AlertQueueItemAdapter()));
+      _registerIfAbsent(3, () => Hive.registerAdapter(AlertRecordAdapter()));
+
+      // Open boxes with a collective timeout
+      await Future.wait([
+        Hive.openBox(AppConstants.boxSettings),
+        Hive.openBox<HealthProfile>(AppConstants.boxHealth),
+        Hive.openBox<DetectionLog>(AppConstants.boxLog),
+        Hive.openBox<AlertQueueItem>(AppConstants.boxQueue),
+        Hive.openBox<AlertRecord>(AppConstants.boxAlerts),
+      ]).timeout(const Duration(seconds: 10));
+
+      // 2. TFLite Initialization
+      setState(() => _status = 'Loading AI model...');
       await ref.read(tfliteServiceProvider).load().timeout(
-        const Duration(seconds: 4),
+        const Duration(seconds: 5),
         onTimeout: () => debugPrint('Splash: TFLite load timed out'),
       );
+      
     } catch (e) {
-      debugPrint('Splash: TFLite Error: $e');
+      debugPrint('Splash: Boot Error: $e');
+      setState(() => _status = 'Continuing startup...');
     }
 
-    await Future.delayed(const Duration(milliseconds: 1000));
+    await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
 
     try {
-      final hasProfile = Hive.box<HealthProfile>(AppConstants.boxHealth)
-          .get('profile') != null;
+      final box = Hive.box<HealthProfile>(AppConstants.boxHealth);
+      final hasProfile = box.isOpen && box.get('profile') != null;
       context.go(hasProfile ? '/home' : '/onboarding');
     } catch (e) {
       debugPrint('Splash: Navigation Error: $e');
       context.go('/onboarding'); // Fallback
+    }
+  }
+
+  void _registerIfAbsent(int typeId, void Function() register) {
+    if (!Hive.isAdapterRegistered(typeId)) {
+      register();
     }
   }
 
@@ -70,8 +98,8 @@ class _SplashState extends ConsumerState<SplashScreen>
         const Text('CrashGuard',
             style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
         const SizedBox(height: 8),
-        const Text('AI-powered emergency detection',
-            style: TextStyle(color: Color(0xFF7D8590), fontSize: 14)),
+        Text(_status,
+            style: const TextStyle(color: Color(0xFF7D8590), fontSize: 14)),
         const SizedBox(height: 40),
         const SizedBox(width: 28, height: 28,
             child: CircularProgressIndicator(strokeWidth: 2.5, color: Color(0xFFE05252))),

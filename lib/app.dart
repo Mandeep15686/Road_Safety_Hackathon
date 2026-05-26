@@ -14,6 +14,11 @@ import 'features/emergency/emergency_screen.dart';
 import 'features/documents/documents_screen.dart';
 import 'core/widgets/main_wrapper.dart';
 import 'core/widgets/animations.dart';
+// ── NEW screen imports ────────────────────────────────────────────────────
+import 'features/nearby/nearby_screen.dart';
+import 'features/nearby/map_screen.dart';
+import 'features/sos/sos_screen.dart';
+import 'features/firstaid/firstaid_screen.dart';
 
 final _router = GoRouter(
   initialLocation: '/',
@@ -68,6 +73,17 @@ final _router = GoRouter(
         },
       ),
     ),
+    // ── NEW: Map is a full-screen push route (no bottom nav) ──────────────
+    GoRoute(
+      path: '/map',
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const MapScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    ),
     ShellRoute(
       builder: (context, state, child) => MainWrapper(child: child),
       routes: [
@@ -111,6 +127,37 @@ final _router = GoRouter(
             },
           ),
         ),
+        // ── NEW shell routes (show bottom nav) ───────────────────────────
+        GoRoute(
+          path: '/nearby',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const NearbyScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+        ),
+        GoRoute(
+          path: '/sos',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const SosScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+        ),
+        GoRoute(
+          path: '/firstaid',
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const FirstAidScreen(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+          ),
+        ),
       ],
     ),
   ],
@@ -145,7 +192,8 @@ class ThemeRevealWrapper extends ConsumerStatefulWidget {
   ConsumerState<ThemeRevealWrapper> createState() => _ThemeRevealWrapperState();
 }
 
-class _ThemeRevealWrapperState extends ConsumerState<ThemeRevealWrapper> with SingleTickerProviderStateMixin {
+class _ThemeRevealWrapperState extends ConsumerState<ThemeRevealWrapper>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   Widget? _bgChild;
   ThemeMode? _prevTheme;
@@ -170,14 +218,13 @@ class _ThemeRevealWrapperState extends ConsumerState<ThemeRevealWrapper> with Si
     final currentTheme = ref.watch(themeProvider);
     final offset = ref.watch(themeSwitchOffsetProvider);
 
-    // If theme changed and we have an offset, animate
     if (_prevTheme != null && _prevTheme != currentTheme && offset != null) {
-      _bgChild = _bgChild ?? widget.child; // Keep previous child as background
+      _bgChild = _bgChild ?? widget.child;
       _controller.reset();
       _controller.forward().then((_) {
         setState(() {
-          _bgChild = null; // Clean up background
-          ref.read(themeSwitchOffsetProvider.notifier).state = null; // Clear offset
+          _bgChild = null;
+          ref.read(themeSwitchOffsetProvider.notifier).state = null;
         });
       });
     }

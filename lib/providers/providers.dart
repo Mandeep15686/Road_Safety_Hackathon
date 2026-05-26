@@ -11,6 +11,10 @@ import '../services/local_event_log_service.dart';
 import '../services/local_health_service.dart';
 import '../services/local_alert_history_service.dart';
 import '../core/constants.dart';
+// ── NEW imports ───────────────────────────────────────────────────────────
+import '../services/nearby_service.dart';
+import '../services/nearby_cache_service.dart';
+import '../features/nearby/place_model.dart';
 
 // ── Detection services ──────────────────────────────────────────────────────
 final sensorServiceProvider = Provider<SensorService>((ref) {
@@ -33,7 +37,6 @@ final confidenceProvider = Provider<double>((ref) {
   final vec = ref.watch(sensorStreamProvider).value;
   if (vec == null) return 0.0;
   final score = ref.read(tfliteServiceProvider).infer(vec);
-  // Update dispatch service with latest confidence
   ref.read(dispatchServiceProvider).updateConfidence(score);
   return score;
 });
@@ -127,3 +130,40 @@ final countdownProvider =
     StateNotifierProvider<CountdownNotifier, int>((ref) =>
         CountdownNotifier(ref.read(dispatchServiceProvider),
                           ref.read(eventLogServiceProvider)));
+
+// ── NEW: Nearby services (OSM Overpass + Hive cache) ─────────────────────────
+
+final nearbyServiceProvider =
+    Provider<NearbyService>((ref) => NearbyService());
+
+final nearbyCacheServiceProvider =
+    Provider<NearbyCacheService>((ref) => NearbyCacheService());
+
+/// Cache-first, offline-fallback strategy:
+///   1. Return fresh Hive cache (< 30 min, user < 2 km from saved point)
+///   2. Fetch live from OSM Overpass API → save to Hive cache
+///   3. Network fails → return stale cache (offline mode)
+///   4. No cache at all → rethrow so UI shows error state
+final nearbyPlacesProvider = FutureProvider<List<NearbyPlace>>((ref) async {
+  final service = ref.read(nearbyServiceProvider);
+  final cache   = ref.read(nearbyCacheServiceProvider);
+  final lat     = ref.read(latitudeProvider);
+  final lng     = ref.read(longitudeProvider);
+
+  // Step 1 — try fresh cache
+  if (lat != 0 && lng != 0) {
+    final fresh = cache.loadFresh(lat, lng);
+    if (fresh != null && fresh.isNotEmpty) return fresh;
+  }
+
+  // Step 2 — fetch live
+  try {
+    final places = await service.fetchNearby();
+    if (places.isNotEmpty) await cache.save(places, lat, lng);
+    return places;
+  } catch (e) {
+    // Step 3 — offline fallback
+    if (cache.hasAnyCache()) return cache.loadStale();
+    rethrow; // Step 4 — no cache, propagate to UI
+  }
+});
