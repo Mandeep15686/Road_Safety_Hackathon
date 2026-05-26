@@ -1,4 +1,4 @@
-package com.yourteam.crashguard
+package com.crashguard.app
 
 import io.flutter.embedding.android.FlutterActivity
 

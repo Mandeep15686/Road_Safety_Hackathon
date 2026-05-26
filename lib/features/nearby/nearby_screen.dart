@@ -147,7 +147,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        const Color(0xFF58A6FF).withOpacity(0.08),
+                        const Color(0xFF58A6FF).withValues(alpha: 0.08),
                         Theme.of(context).scaffoldBackgroundColor,
                       ],
                     ),
@@ -320,7 +320,7 @@ class _NearbyCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color:        color.withOpacity(0.12),
+              color:        color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -349,7 +349,7 @@ class _NearbyCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color:        color.withOpacity(0.1),
+              color:        color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(

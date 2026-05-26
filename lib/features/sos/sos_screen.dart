@@ -92,10 +92,7 @@ class _SosScreenState extends ConsumerState<SosScreen>
 
     // In production: derive country from reverse geocoding.
     // For now use India as default (matches target audience).
-    const country = CountryEmergency(
-      countryCode: 'IN', countryName: 'India',
-      police: '100', ambulance: '108', fire: '101', general: '112',
-    );
+    final country = CountryEmergency.forCode('IN');
 
     return Scaffold(
       body: CustomScrollView(
@@ -123,7 +120,7 @@ class _SosScreenState extends ConsumerState<SosScreen>
                     begin: Alignment.topCenter,
                     end:   Alignment.bottomCenter,
                     colors: [
-                      const Color(0xFFE05252).withOpacity(0.08),
+                      const Color(0xFFE05252).withValues(alpha: 0.08),
                       Theme.of(context).scaffoldBackgroundColor,
                     ],
                   ),
@@ -150,11 +147,11 @@ class _SosScreenState extends ConsumerState<SosScreen>
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: _isCalling
-                                ? const Color(0xFFE05252).withOpacity(0.6)
+                                ? const Color(0xFFE05252).withValues(alpha: 0.6)
                                 : const Color(0xFFE05252),
                             boxShadow: [
                               BoxShadow(
-                                color:       const Color(0xFFE05252).withOpacity(0.35),
+                                color:       const Color(0xFFE05252).withValues(alpha: 0.35),
                                 blurRadius:  32,
                                 spreadRadius: 4,
                               ),
@@ -203,10 +200,10 @@ class _SosScreenState extends ConsumerState<SosScreen>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
-                        color:        const Color(0xFF3FB950).withOpacity(0.08),
+                        color:        const Color(0xFF3FB950).withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(10),
                         border:       Border.all(
-                            color: const Color(0xFF3FB950).withOpacity(0.3)),
+                            color: const Color(0xFF3FB950).withValues(alpha: 0.3)),
                       ),
                       child: Row(children: [
                         const Icon(Icons.location_on_rounded,
@@ -358,7 +355,7 @@ class _ActionTile extends StatelessWidget {
           Container(
             padding:    const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color:        color.withOpacity(0.12),
+              color:        color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 22),

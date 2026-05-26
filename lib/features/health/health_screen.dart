@@ -190,7 +190,13 @@ class _State extends ConsumerState<HealthProfileScreen> {
       child: Scaffold(
         appBar: AppBar(
           leading: const ThemeToggle(),
-          title: const Text('Health Profile'),
+          title: const Hero(
+            tag: 'medical_info_card',
+            child: Material(
+              color: Colors.transparent,
+              child: Text('Health Profile'),
+            ),
+          ),
           centerTitle: true,
           actions: [
             Container(
@@ -207,158 +213,152 @@ class _State extends ConsumerState<HealthProfileScreen> {
             ),
           ],
         ),
-        body: Hero(
-          tag: 'medical_info_card',
-          child: Material(
-            color: Colors.transparent,
-            child: ListView(
-              padding: const EdgeInsets.all(20),
-              physics: const BouncingScrollPhysics(),
-              children: [
-                FadeInTranslate(delay: const Duration(milliseconds: 100), child: _field('Full Name', _name, Icons.person_rounded)),
-                FadeInTranslate(
-                  delay: const Duration(milliseconds: 150),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    const Text('Date of Birth', style: TextStyle(fontSize: 12, color: Color(0xFF7D8590))),
-                    const SizedBox(height: 8),
-                    Row(children: [
-                      Expanded(child: _dobBlock('DD', _day)),
-                      const SizedBox(width: 12),
-                      Expanded(child: _dobBlock('MM', _month)),
-                      const SizedBox(width: 12),
-                      Expanded(child: _dobBlock('YYYY', _year, flex: 2)),
-                    ]),
-                  ]),
-                ),
-                const SizedBox(height: 16),
-                FadeInTranslate(
-                  delay: const Duration(milliseconds: 200),
-                  child: DropdownButtonFormField<String>(
-                    initialValue: _selectedBlood,
-                    decoration: const InputDecoration(
-                      labelText: 'Blood Group',
-                      prefixIcon: Icon(Icons.bloodtype_rounded, size: 20),
-                    ),
-                    items: _bloodGroups
-                        .map((group) => DropdownMenuItem(
-                              value: group,
-                              child: Text(group),
-                            ))
-                        .toList(),
-                    onChanged: (val) => setState(() => _selectedBlood = val),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                FadeInTranslate(
-                  delay: const Duration(milliseconds: 250),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    const Text('Allergies', style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Wrap(spacing: 8, runSpacing: 4, children: [
-                      ..._allergies.map((a) => Chip(
-                          label: Text(a),
-                          deleteIconColor: const Color(0xFFE05252),
-                          onDeleted: () => setState(() => _allergies.remove(a)))),
-                      ActionChip(
-                        label: const Text('+ Add'),
-                        onPressed: () => showDialog(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                                  title: const Text('Add Allergy'),
-                                  content: TextField(
-                                      controller: _allergyCtrl,
-                                      decoration: const InputDecoration(hintText: 'e.g. penicillin')),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          if (_allergyCtrl.text.isNotEmpty) {
-                                            setState(() {
-                                              _allergies.add(_allergyCtrl.text.trim());
-                                              _allergyCtrl.clear();
-                                            });
-                                          }
-                                        },
-                                        child: const Text('Add'))
-                                  ],
-                                )),
-                      ),
-                    ]),
-                  ]),
-                ),
-                const SizedBox(height: 16),
-                FadeInTranslate(
-                  delay: const Duration(milliseconds: 300),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    const Text('Chronic Conditions', style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Wrap(spacing: 8, runSpacing: 4, children: [
-                      ..._conditions.map((c) => Chip(
-                          label: Text(c),
-                          deleteIconColor: const Color(0xFFE05252),
-                          onDeleted: () => setState(() => _conditions.remove(c)))),
-                      ActionChip(
-                        label: const Text('+ Add'),
-                        onPressed: () => showDialog(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                                  title: const Text('Add Condition'),
-                                  content: TextField(
-                                      controller: _conditionCtrl,
-                                      decoration: const InputDecoration(hintText: 'e.g. Diabetes')),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          if (_conditionCtrl.text.isNotEmpty) {
-                                            setState(() {
-                                              _conditions.add(_conditionCtrl.text.trim());
-                                              _conditionCtrl.clear();
-                                            });
-                                          }
-                                        },
-                                        child: const Text('Add'))
-                                  ],
-                                )),
-                      ),
-                    ]),
-                  ]),
-                ),
-                const SizedBox(height: 20),
-                const Divider(),
-                const SizedBox(height: 16),
-                FadeInTranslate(
-                  delay: const Duration(milliseconds: 350),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    const Text('Emergency Contact', style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 12),
-                    _field('Contact Name', _emName, Icons.contacts_rounded,
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.contact_page_rounded, color: Color(0xFF58A6FF)),
-                          onPressed: _pickContact,
-                          tooltip: 'Select from contacts',
-                        )),
-                    _field('Phone Number', _emPhone, Icons.phone_rounded, type: TextInputType.phone),
-                  ]),
-                ),
+        body: ListView(
+          padding: const EdgeInsets.all(20),
+          physics: const BouncingScrollPhysics(),
+          children: [
+            FadeInTranslate(delay: const Duration(milliseconds: 100), child: _field('Full Name', _name, Icons.person_rounded)),
+            FadeInTranslate(
+              delay: const Duration(milliseconds: 150),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('Date of Birth', style: TextStyle(fontSize: 12, color: Color(0xFF7D8590))),
                 const SizedBox(height: 8),
-                const Text('Saved locally on device — no internet required', style: TextStyle(fontSize: 11, color: Color(0xFF7D8590))),
-                const SizedBox(height: 28),
-                FadeInTranslate(
-                  delay: const Duration(milliseconds: 400),
-                  child: BouncingWidget(
-                    onTap: _saving ? null : _save,
-                    child: ElevatedButton(
-                      onPressed: _saving ? null : () {}, // Handled by BouncingWidget
-                      child: _saving
-                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                          : const Text('Save Profile'),
-                    ),
-                  ),
-                ),
-              ],
+                Row(children: [
+                  Expanded(child: _dobBlock('DD', _day)),
+                  const SizedBox(width: 12),
+                  Expanded(child: _dobBlock('MM', _month)),
+                  const SizedBox(width: 12),
+                  Expanded(child: _dobBlock('YYYY', _year, flex: 2)),
+                ]),
+              ]),
             ),
-          ),
+            const SizedBox(height: 16),
+            FadeInTranslate(
+              delay: const Duration(milliseconds: 200),
+              child: DropdownButtonFormField<String>(
+                initialValue: _selectedBlood,
+                decoration: const InputDecoration(
+                  labelText: 'Blood Group',
+                  prefixIcon: Icon(Icons.bloodtype_rounded, size: 20),
+                ),
+                items: _bloodGroups
+                    .map((group) => DropdownMenuItem(
+                          value: group,
+                          child: Text(group),
+                        ))
+                    .toList(),
+                onChanged: (val) => setState(() => _selectedBlood = val),
+              ),
+            ),
+            const SizedBox(height: 16),
+            FadeInTranslate(
+              delay: const Duration(milliseconds: 250),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('Allergies', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Wrap(spacing: 8, runSpacing: 4, children: [
+                  ..._allergies.map((a) => Chip(
+                      label: Text(a),
+                      deleteIconColor: const Color(0xFFE05252),
+                      onDeleted: () => setState(() => _allergies.remove(a)))),
+                  ActionChip(
+                    label: const Text('+ Add'),
+                    onPressed: () => showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              title: const Text('Add Allergy'),
+                              content: TextField(
+                                  controller: _allergyCtrl,
+                                  decoration: const InputDecoration(hintText: 'e.g. penicillin')),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      if (_allergyCtrl.text.isNotEmpty) {
+                                        setState(() {
+                                          _allergies.add(_allergyCtrl.text.trim());
+                                          _allergyCtrl.clear();
+                                        });
+                                      }
+                                    },
+                                    child: const Text('Add'))
+                              ],
+                            )),
+                  ),
+                ]),
+              ]),
+            ),
+            const SizedBox(height: 16),
+            FadeInTranslate(
+              delay: const Duration(milliseconds: 300),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('Chronic Conditions', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Wrap(spacing: 8, runSpacing: 4, children: [
+                  ..._conditions.map((c) => Chip(
+                      label: Text(c),
+                      deleteIconColor: const Color(0xFFE05252),
+                      onDeleted: () => setState(() => _conditions.remove(c)))),
+                  ActionChip(
+                    label: const Text('+ Add'),
+                    onPressed: () => showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              title: const Text('Add Condition'),
+                              content: TextField(
+                                  controller: _conditionCtrl,
+                                  decoration: const InputDecoration(hintText: 'e.g. Diabetes')),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      if (_conditionCtrl.text.isNotEmpty) {
+                                        setState(() {
+                                          _conditions.add(_conditionCtrl.text.trim());
+                                          _conditionCtrl.clear();
+                                        });
+                                      }
+                                    },
+                                    child: const Text('Add'))
+                              ],
+                            )),
+                  ),
+                ]),
+              ]),
+            ),
+            const SizedBox(height: 20),
+            const Divider(),
+            const SizedBox(height: 16),
+            FadeInTranslate(
+              delay: const Duration(milliseconds: 350),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('Emergency Contact', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 12),
+                _field('Contact Name', _emName, Icons.contacts_rounded,
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.contact_page_rounded, color: Color(0xFF58A6FF)),
+                      onPressed: _pickContact,
+                      tooltip: 'Select from contacts',
+                    )),
+                _field('Phone Number', _emPhone, Icons.phone_rounded, type: TextInputType.phone),
+              ]),
+            ),
+            const SizedBox(height: 8),
+            const Text('Saved locally on device — no internet required', style: TextStyle(fontSize: 11, color: Color(0xFF7D8590))),
+            const SizedBox(height: 28),
+            FadeInTranslate(
+              delay: const Duration(milliseconds: 400),
+              child: BouncingWidget(
+                onTap: _saving ? null : _save,
+                child: ElevatedButton(
+                  onPressed: _saving ? null : () {}, // Handled by BouncingWidget
+                  child: _saving
+                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                      : const Text('Save Profile'),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

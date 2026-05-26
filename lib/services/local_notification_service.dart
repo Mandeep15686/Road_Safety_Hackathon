@@ -6,10 +6,25 @@ class LocalNotificationService {
   static final _notifications = FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const settings = InitializationSettings(android: android);
+    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const settings = InitializationSettings(android: androidInit);
     
     await _notifications.initialize(settings);
+
+    // Create the channel for Background Service to prevent "Bad notification" crash on Android 8.0+
+    const channel = AndroidNotificationChannel(
+      'crash_guard_channel', // MUST match main.dart
+      'CrashGuard Background Service',
+      description: 'Monitoring for accidents in background',
+      importance: Importance.low,
+      playSound: false,
+      showBadge: false,
+    );
+
+    await _notifications
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
     tz.initializeTimeZones();
   }
 

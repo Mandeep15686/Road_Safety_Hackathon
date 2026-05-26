@@ -160,7 +160,7 @@ class _FirstAidScreenState extends State<FirstAidScreen> {
                     begin: Alignment.topCenter,
                     end:   Alignment.bottomCenter,
                     colors: [
-                      const Color(0xFF3FB950).withOpacity(0.08),
+                      const Color(0xFF3FB950).withValues(alpha: 0.08),
                       Theme.of(context).scaffoldBackgroundColor,
                     ],
                   ),
@@ -176,10 +176,10 @@ class _FirstAidScreenState extends State<FirstAidScreen> {
               padding: const EdgeInsets.symmetric(
                   vertical: 8, horizontal: 12),
               decoration: BoxDecoration(
-                color:        const Color(0xFFE05252).withOpacity(0.07),
+                color:        const Color(0xFFE05252).withValues(alpha: 0.07),
                 borderRadius: BorderRadius.circular(8),
                 border:       Border.all(
-                    color: const Color(0xFFE05252).withOpacity(0.2)),
+                    color: const Color(0xFFE05252).withValues(alpha: 0.2)),
               ),
               child: const Row(children: [
                 Icon(Icons.info_outline_rounded,
@@ -264,7 +264,7 @@ class _GuideCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border:       Border.all(
             color: isExpanded
-                ? guide.color.withOpacity(0.45)
+                ? guide.color.withValues(alpha: 0.45)
                 : Theme.of(context).dividerColor,
             width: isExpanded ? 1.5 : 1.0,
           ),
@@ -277,7 +277,7 @@ class _GuideCard extends StatelessWidget {
               Container(
                 padding:    const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color:        guide.color.withOpacity(0.12),
+                  color:        guide.color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(guide.icon, color: guide.color, size: 22),
@@ -331,7 +331,7 @@ class _GuideCard extends StatelessWidget {
                               width:      24,
                               height:     24,
                               decoration: BoxDecoration(
-                                color: guide.color.withOpacity(0.14),
+                                color: guide.color.withValues(alpha: 0.14),
                                 shape: BoxShape.circle,
                               ),
                               child: Center(

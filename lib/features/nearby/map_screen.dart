@@ -67,7 +67,7 @@ class MapScreen extends ConsumerWidget {
             // ── Base tile layer (OpenStreetMap — no API key) ──────────────
             TileLayer(
               urlTemplate:        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-              userAgentPackageName: 'com.yourteam.crashguard',
+              userAgentPackageName: 'com.crashguard.app',
             ),
 
             // ── Place markers ─────────────────────────────────────────────
@@ -120,7 +120,7 @@ class MapScreen extends ConsumerWidget {
                 Container(
                   padding:    const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color:        color.withOpacity(0.12),
+                    color:        color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(icon, color: color, size: 22),
@@ -235,7 +235,7 @@ class _UserMarker extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
-          color:  Colors.blue.withOpacity(0.15),
+          color:  Colors.blue.withValues(alpha: 0.15),
           shape:  BoxShape.circle,
           border: Border.all(color: Colors.blue, width: 2.5),
         ),
@@ -257,7 +257,7 @@ class _PlaceMarker extends StatelessWidget {
           border: Border.all(color: Colors.white, width: 2),
           boxShadow: [
             BoxShadow(
-                color:       color.withOpacity(0.4),
+                color:       color.withValues(alpha: 0.4),
                 blurRadius:  6,
                 spreadRadius: 1),
           ],

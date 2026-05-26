@@ -20,7 +20,6 @@ class AppConstants {
   // Hive box names
   static const String boxHealth  = 'health_profile';
   static const String boxLog     = 'detection_log';
-  static const String boxQueue   = 'alert_queue';   // kept for compat
   static const String boxAlerts  = 'alert_records'; // new local alert store
   static const String boxSettings = 'app_settings';
 }

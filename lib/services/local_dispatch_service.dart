@@ -9,12 +9,10 @@ import '../features/health/health_model.dart';
 /// Fully offline emergency dispatch.
 /// No backend server needed — calls emergency number directly via phone dialer.
 class LocalDispatchService {
-  double _lastConfidence = 0.90;
-
-  void updateConfidence(double c) => _lastConfidence = c;
+  final double _lastConfidence = 0.90;
 
   /// Main dispatch — saves alert locally + dials emergency number.
-  Future<DispatchResult> send() async {
+  Future<DispatchResult> send({double? confidence}) async {
     final alertId = const Uuid().v4();
     Position? pos;
 
@@ -29,12 +27,14 @@ class LocalDispatchService {
     final health =
         Hive.box<HealthProfile>(AppConstants.boxHealth).get('profile');
 
+    final finalConfidence = confidence ?? _lastConfidence;
+
     // ── Save alert locally to Hive ──
     final alert = AlertRecord(
       id: alertId,
       latitude: pos?.latitude ?? 0.0,
       longitude: pos?.longitude ?? 0.0,
-      confidence: _lastConfidence,
+      confidence: finalConfidence,
       healthId: health?.deviceId ?? 'unknown',
       emergencyNum: AppConstants.emergencyNumber,
       timestamp: DateTime.now().millisecondsSinceEpoch,
@@ -47,7 +47,7 @@ class LocalDispatchService {
       id: alertId,
       timestamp: DateTime.now().millisecondsSinceEpoch,
       label: 'ACCIDENT',
-      confidence: _lastConfidence,
+      confidence: finalConfidence,
       lat: pos?.latitude ?? 0.0,
       lng: pos?.longitude ?? 0.0,
       synced: true, // no server to sync to

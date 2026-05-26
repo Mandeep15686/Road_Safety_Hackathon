@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/constants.dart';
 import '../../providers/providers.dart';
 import '../../core/widgets/animations.dart';
 
@@ -45,7 +46,7 @@ class CountdownScreen extends ConsumerWidget {
             FadeInTranslate(
               delay: const Duration(milliseconds: 400),
               child: TweenAnimationBuilder<double>(
-                tween: Tween(begin: 1.0, end: secs / 30.0),
+                tween: Tween(begin: 1.0, end: secs / AppConstants.countdownSecs.toDouble()),
                 duration: const Duration(milliseconds: 500),
                 builder: (_, v, __) => Stack(alignment: Alignment.center, children: [
                   SizedBox(width: 180, height: 180,

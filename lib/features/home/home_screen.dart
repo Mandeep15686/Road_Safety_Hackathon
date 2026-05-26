@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,6 +29,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final show = _scrollController.offset > 300;
       if (show != _showBackToTop) {
         setState(() => _showBackToTop = show);
+      }
+    });
+
+    // Listen for crash events from the background service
+    FlutterBackgroundService().on('crash_detected').listen((event) {
+      if (mounted && !_countdownStarted) {
+        debugPrint('HomeScreen: Received crash event from background');
+        setState(() => _countdownStarted = true);
+        ref.read(countdownProvider.notifier).start();
+        context.push('/countdown');
       }
     });
   }

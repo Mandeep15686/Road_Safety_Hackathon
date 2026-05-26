@@ -11,6 +11,7 @@ import '../services/local_event_log_service.dart';
 import '../services/local_health_service.dart';
 import '../services/local_alert_history_service.dart';
 import '../core/constants.dart';
+export 'alert_provider.dart';
 // ── NEW imports ───────────────────────────────────────────────────────────
 import '../services/nearby_service.dart';
 import '../services/nearby_cache_service.dart';
@@ -36,9 +37,7 @@ final sensorStreamProvider = StreamProvider<SensorVector>((ref) =>
 final confidenceProvider = Provider<double>((ref) {
   final vec = ref.watch(sensorStreamProvider).value;
   if (vec == null) return 0.0;
-  final score = ref.read(tfliteServiceProvider).infer(vec);
-  ref.read(dispatchServiceProvider).updateConfidence(score);
-  return score;
+  return ref.read(tfliteServiceProvider).infer(vec);
 });
 
 final crashDetectedProvider = Provider<bool>((ref) =>
@@ -125,11 +124,13 @@ class AppThemeNotifier extends StateNotifier<ThemeMode> {
 final emergencyHelplinesProvider = FutureProvider<List<EmergencyHelpline>>((ref) =>
     ref.read(emergencyHelplineServiceProvider).getEmergencyHelplines());
 
-// ── Countdown ────────────────────────────────────────────────────────────────
+// ── Countdown & Dispatch ──────────────────────────────────────────────────
+
 final countdownProvider =
     StateNotifierProvider<CountdownNotifier, int>((ref) =>
         CountdownNotifier(ref.read(dispatchServiceProvider),
-                          ref.read(eventLogServiceProvider)));
+                          ref.read(eventLogServiceProvider),
+                          ref));
 
 // ── NEW: Nearby services (OSM Overpass + Hive cache) ─────────────────────────
 

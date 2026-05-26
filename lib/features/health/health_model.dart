@@ -46,21 +46,6 @@ class DetectionLog extends HiveObject {
   });
 }
 
-// ─── Alert Queue (kept for compatibility, now unused for offline) ─────────────
-@HiveType(typeId: 2)
-class AlertQueueItem extends HiveObject {
-  @HiveField(0) String id;
-  @HiveField(1) String payload;
-  @HiveField(2) String status;
-  @HiveField(3) int retries;
-  @HiveField(4) int createdAt;
-
-  AlertQueueItem({
-    required this.id, required this.payload,
-    this.status = 'pending', this.retries = 0, required this.createdAt,
-  });
-}
-
 // ─── Alert Record (NEW — replaces backend alerts table) ──────────────────────
 @HiveType(typeId: 3)
 class AlertRecord extends HiveObject {

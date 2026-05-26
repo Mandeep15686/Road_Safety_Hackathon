@@ -12,24 +12,44 @@ class MainWrapper extends StatefulWidget {
 class _MainWrapperState extends State<MainWrapper> {
   int _calculateSelectedIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.path;
-    if (location.startsWith('/home'))     return 0;
-    if (location.startsWith('/nearby'))   return 1;
-    if (location.startsWith('/sos'))      return 2;
-    if (location.startsWith('/firstaid')) return 3;
+    if (location.startsWith('/home')) {
+      return 0;
+    }
+    if (location.startsWith('/nearby')) {
+      return 1;
+    }
+    if (location.startsWith('/sos')) {
+      return 2;
+    }
+    if (location.startsWith('/firstaid')) {
+      return 3;
+    }
     // Emergency / Documents / Health all fall under "More" tab
     if (location.startsWith('/emergency') ||
         location.startsWith('/documents') ||
-        location.startsWith('/health'))   return 4;
+        location.startsWith('/health')) {
+      return 4;
+    }
     return 0;
   }
 
   void _onPageChanged(int index, BuildContext context) {
     switch (index) {
-      case 0: context.go('/home');      break;
-      case 1: context.go('/nearby');    break;
-      case 2: context.go('/sos');       break;
-      case 3: context.go('/firstaid');  break;
-      case 4: context.go('/emergency'); break;
+      case 0:
+        context.go('/home');
+        break;
+      case 1:
+        context.go('/nearby');
+        break;
+      case 2:
+        context.go('/sos');
+        break;
+      case 3:
+        context.go('/firstaid');
+        break;
+      case 4:
+        context.go('/emergency');
+        break;
     }
   }
 

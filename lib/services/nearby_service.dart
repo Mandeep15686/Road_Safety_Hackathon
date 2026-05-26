@@ -64,7 +64,10 @@ out center;
 
     final response = await http.post(
       Uri.parse(_overpassUrl),
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'User-Agent': 'CrashGuardApp/1.0 (com.crashguard.app)',
+      },
       body: {'data': query},
     ).timeout(const Duration(seconds: 30));
 

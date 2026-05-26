@@ -14,10 +14,14 @@ class _State extends State<OnboardingScreen> {
 
   Future<void> _requestPermissions() async {
     setState(() => _loading = true);
-    await [Permission.location, Permission.microphone,
-           Permission.locationAlways, Permission.activityRecognition,
-           Permission.phone]
-        .request();
+    await [
+      Permission.location,
+      Permission.microphone,
+      Permission.locationAlways,
+      Permission.activityRecognition,
+      Permission.phone,
+      Permission.notification,
+    ].request();
     if (mounted) context.go('/health');
   }
 

@@ -35,7 +35,6 @@ class _SplashState extends ConsumerState<SplashScreen>
       // Register adapters (only if not already registered)
       _registerIfAbsent(0, () => Hive.registerAdapter(HealthProfileAdapter()));
       _registerIfAbsent(1, () => Hive.registerAdapter(DetectionLogAdapter()));
-      _registerIfAbsent(2, () => Hive.registerAdapter(AlertQueueItemAdapter()));
       _registerIfAbsent(3, () => Hive.registerAdapter(AlertRecordAdapter()));
 
       // Open boxes with a collective timeout
@@ -43,7 +42,6 @@ class _SplashState extends ConsumerState<SplashScreen>
         Hive.openBox(AppConstants.boxSettings),
         Hive.openBox<HealthProfile>(AppConstants.boxHealth),
         Hive.openBox<DetectionLog>(AppConstants.boxLog),
-        Hive.openBox<AlertQueueItem>(AppConstants.boxQueue),
         Hive.openBox<AlertRecord>(AppConstants.boxAlerts),
       ]).timeout(const Duration(seconds: 10));
 
