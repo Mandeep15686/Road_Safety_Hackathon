@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -20,6 +21,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _countdownStarted = false;
   late ScrollController _scrollController;
   bool _showBackToTop = false;
+  StreamSubscription? _bgSub;
 
   @override
   void initState() {
@@ -33,7 +35,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
 
     // Listen for crash events from the background service
-    FlutterBackgroundService().on('crash_detected').listen((event) {
+    _bgSub = FlutterBackgroundService().on('crash_detected').listen((event) {
       if (mounted && !_countdownStarted) {
         debugPrint('HomeScreen: Received crash event from background');
         setState(() => _countdownStarted = true);
@@ -45,6 +47,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void dispose() {
+    _bgSub?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
@@ -71,10 +74,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (crashed && !_countdownStarted) {
         setState(() => _countdownStarted = true);
         ref.read(countdownProvider.notifier).start();
-        context.push('/countdown');
-      }
-      if (!crashed) {
-        setState(() => _countdownStarted = false);
+        context.push('/countdown').then((_) {
+          // Reset the guard flag only AFTER the countdown screen is popped/dismissed
+          if (mounted) setState(() => _countdownStarted = false);
+        });
       }
     });
 

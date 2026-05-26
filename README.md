@@ -101,7 +101,7 @@ flutter test
 ---
 
 ## 🔒 Privacy & Security
-*   **Data Sovereignty**: Your Health Profile, Location Logs, and Accident Records never leave the `D:/App Dev/crashguard/` scope (or the equivalent sandbox on iOS/Android).
+*   **Data Sovereignty**: Your Health Profile, Location Logs, and Accident Records never leave the app's local sandbox (Internal Storage on Android / Documents on iOS).
 *   **Zero Permissions Overreach**: Camera/Microphone access is only used for local analysis (audio levels) or optional document scanning; no data is uploaded.
 *   **Offline First**: Designed for rural highways where 4G/5G is unreliable.
 

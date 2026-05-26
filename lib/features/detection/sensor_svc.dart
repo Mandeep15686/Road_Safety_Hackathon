@@ -9,22 +9,32 @@ class SensorService {
   final _controller = StreamController<SensorVector>.broadcast();
   double _prevAccel = 0, _gyroMag = 0, _speed = 0, _audio = 0, _lat = 0, _lng = 0;
   double _lastJerk = 0;
+  int _lastTimestampUs = 0;
   StreamSubscription? _accelSub, _gyroSub, _gpsSub, _noiseSub;
   Timer? _refreshTimer;
   final _noiseMeter = NoiseMeter();
 
   void start() {
-    // Accelerometer at high rate
-    _accelSub = accelerometerEventStream().listen((e) {
+    // Accelerometer at high rate (~50Hz)
+    _accelSub = accelerometerEventStream(
+      samplingPeriod: SensorInterval.gameInterval,
+    ).listen((e) {
       final mag = sqrt(e.x * e.x + e.y * e.y + e.z * e.z);
-      // Jerk calculation (da/dt) assuming ~50Hz (0.02s interval)
-      _lastJerk = (mag - _prevAccel).abs() / 0.02;
+      final now = DateTime.now().microsecondsSinceEpoch;
+
+      // Calculate real dt to avoid sampling drift errors
+      final dtSec = (_lastTimestampUs == 0) ? 0.02 : (now - _lastTimestampUs) / 1e6;
+      _lastJerk = (mag - _prevAccel).abs() / dtSec;
+
+      _lastTimestampUs = now;
       _prevAccel = mag;
       _emit(); // Emit on every accel event for live data
     });
 
-    // Gyroscope
-    _gyroSub = gyroscopeEventStream().listen((e) {
+    // Gyroscope (~50Hz)
+    _gyroSub = gyroscopeEventStream(
+      samplingPeriod: SensorInterval.gameInterval,
+    ).listen((e) {
       _gyroMag = sqrt(e.x * e.x + e.y * e.y + e.z * e.z);
     });
 
@@ -77,5 +87,7 @@ class SensorService {
     _gpsSub?.cancel();
     _noiseSub?.cancel();
     _controller.close();
+    _lastTimestampUs = 0;
+    _prevAccel = 0;
   }
 }

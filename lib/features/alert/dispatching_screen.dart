@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/constants.dart';
 import '../../providers/providers.dart';
 import '../../core/widgets/animations.dart';
 
@@ -56,9 +57,9 @@ class DispatchingScreen extends ConsumerWidget {
       ),
       SizedBox(height: 8),
       FadeInTranslate(
-        delay: Duration(milliseconds: 300),
-        child: Text('Dialling 112 on your phone',
-            style: TextStyle(color: Color(0xFF7D8590))),
+        delay: const Duration(milliseconds: 300),
+        child: Text('Dialling ${AppConstants.emergencyNumber} on your phone',
+            style: const TextStyle(color: Color(0xFF7D8590))),
       ),
       SizedBox(height: 4),
       FadeInTranslate(
@@ -83,13 +84,13 @@ class DispatchingScreen extends ConsumerWidget {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),
       const SizedBox(height: 8),
-      const FadeInTranslate(
-        delay: Duration(milliseconds: 300),
+      FadeInTranslate(
+        delay: const Duration(milliseconds: 300),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 32),
-          child: Text('Alert saved locally. Please call 112 or 108 manually.',
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Text('Alert saved locally. Please call ${AppConstants.emergencyNumber} manually.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Color(0xFF7D8590))),
+              style: const TextStyle(color: Color(0xFF7D8590))),
         ),
       ),
       const SizedBox(height: 24),

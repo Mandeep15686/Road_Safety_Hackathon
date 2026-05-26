@@ -13,10 +13,16 @@ class TFLiteService {
       _interp = await Interpreter.fromAsset('assets/crash_model.tflite');
       
       // Verify API & Model compatibility (especially for ^0.12.1 updates)
-      assert(_interp!.getInputTensors()[0].shape.toString() == '[1, 5]',
-          'Model input shape mismatch! Expected [1, 5]');
-      assert(_interp!.getOutputTensors()[0].shape.toString() == '[1, 1]',
-          'Model output shape mismatch! Expected [1, 1]');
+      final inputShape = _interp!.getInputTensors()[0].shape.toString();
+      final outputShape = _interp!.getOutputTensors()[0].shape.toString();
+
+      if (inputShape != '[1, 5]' || outputShape != '[1, 1]') {
+        debugPrint('TFLite Model shape mismatch! Input: $inputShape (expected [1, 5]), '
+            'Output: $outputShape (expected [1, 1]). Fallback will be used.');
+        _interp?.close();
+        _interp = null;
+        return;
+      }
 
       debugPrint('TFLite loaded. Input: ${_interp!.getInputTensors()} '
           'Output: ${_interp!.getOutputTensors()}');

@@ -47,6 +47,7 @@ class DetectionLog extends HiveObject {
 }
 
 // ─── Alert Record (NEW — replaces backend alerts table) ──────────────────────
+// typeId 2 reserved / removed
 @HiveType(typeId: 3)
 class AlertRecord extends HiveObject {
   @HiveField(0) String id;
